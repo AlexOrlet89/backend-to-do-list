@@ -16,7 +16,7 @@ describe('backend-express-template routes', () => {
   it('creates a new user', async () => {
     const res = await request(app).post('/api/v1/users').send(mockUser);
     const { email } = mockUser;
-
+    expect(res.status).toEqual(200);
     expect(res.body).toEqual({
       id: expect.any(String),
       email,
