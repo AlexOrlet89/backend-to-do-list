@@ -86,7 +86,7 @@ describe('backend-express-template routes', () => {
     expect(response.body).not.toEqual([todo2]);
   });
 
-  it.only('should update an authd users todo', async () => {
+  it('should update an authd users todo', async () => {
     const [agent, user] = await registerAndLogin();
 
     const todo = await Todo.insert({
@@ -101,6 +101,23 @@ describe('backend-express-template routes', () => {
 
     expect(response.status).toBe(200);
     expect(response.body).toEqual({ ...todo, is_completed: true });
+  });
+
+  it.only('should delete an authd users todo', async () => {
+    const [agent, user] = await registerAndLogin();
+
+    const todo = await Todo.insert({
+      task: 'do your taxes',
+      is_completed: false,
+      user_id: user.id,
+    });
+
+    const response = await agent.delete(`/api/v1/todos/${todo.id}`);
+
+    expect(response.status).toBe(200);
+    const leftovers = await agent.get('api/v1/todos');
+
+    expect(leftovers.body).toEqual(null);
   });
 
   afterAll(() => {
