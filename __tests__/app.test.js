@@ -115,9 +115,9 @@ describe('backend-express-template routes', () => {
     const response = await agent.delete(`/api/v1/todos/${todo.id}`);
 
     expect(response.status).toBe(200);
-    const leftovers = await agent.get('api/v1/todos');
+    const leftovers = await agent.get('/api/v1/todos');
 
-    expect(leftovers.body).toEqual(null);
+    expect(leftovers.body).toEqual([]);
   });
 
   afterAll(() => {
