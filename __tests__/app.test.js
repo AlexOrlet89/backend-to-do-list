@@ -37,13 +37,26 @@ describe('backend-express-template routes', () => {
     });
   });
 
-  it.only('/me returns the current user', async () => {
+  it('/me returns the current user', async () => {
     const [agent, user] = await registerAndLogin();
     const me = await agent.get('/api/v1/users/me');
     expect(me.body).toEqual({
       ...user,
       exp: expect.any(Number),
       iat: expect.any(Number),
+    });
+  });
+
+  it.only('should create a new todo for the authenticated user', async () => {
+    const [agent, user] = await registerAndLogin();
+    const todo = { task: 'try to take over the world', is_completed: false };
+    const response = await agent.post('/api/v1/todos').send(todo);
+    expect(response.status).toEqual(200);
+    expect(response.body).toEqual({
+      id: expect.any(String),
+      task: todo.task,
+      is_completed: todo.is_completed,
+      user_id: user.id,
     });
   });
 
