@@ -65,7 +65,7 @@ describe('backend-express-template routes', () => {
     });
   });
 
-  it.only('should get todos associated with authenticated user', async () => {
+  it('should get todos associated with authenticated user', async () => {
     const [agent, user] = await registerAndLogin();
     const notUser = await UserService.create(mockUser2);
 
@@ -84,6 +84,22 @@ describe('backend-express-template routes', () => {
     expect(response.status).toEqual(200);
     expect(response.body).toEqual([todo]);
     expect(response.body).not.toEqual([todo2]);
+  });
+
+  it.only('should update an authd users todo', async () => {
+    const [agent, user] = await registerAndLogin();
+
+    const todo = await Todo.insert({
+      task: 'try to take over the world',
+      is_completed: false,
+      user_id: user.id,
+    });
+
+    const response = await agent
+      .put(`/api/v1/todos/${todo.id}`)
+      .send({ is_completed: true });
+
+    expect(response.status).toBe(200);
   });
 
   afterAll(() => {
