@@ -100,6 +100,7 @@ describe('backend-express-template routes', () => {
       .send({ is_completed: true });
 
     expect(response.status).toBe(200);
+    expect(response.body).toEqual({ ...todo, is_completed: true });
   });
 
   afterAll(() => {
