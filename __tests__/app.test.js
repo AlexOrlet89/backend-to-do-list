@@ -40,6 +40,7 @@ describe('backend-express-template routes', () => {
   it.only('/me returns the current user', async () => {
     const [agent, user] = await registerAndLogin();
     const me = await agent.get('/api/v1/users/me');
+    console.log(me);
     expect(me.body).toEqual({
       ...user,
       exp: expect.any(Number),
