@@ -3,9 +3,14 @@ const setup = require('../data/setup');
 const request = require('supertest');
 const app = require('../lib/app');
 const UserService = require('../lib/services/UserService');
+const Todo = require('../lib/models/Todo');
 
 const mockUser = {
   email: 'test@example.com',
+  password: '123456',
+};
+const mockUser2 = {
+  email: 'test2@example.com',
   password: '123456',
 };
 
@@ -47,7 +52,7 @@ describe('backend-express-template routes', () => {
     });
   });
 
-  it.only('should create a new todo for the authenticated user', async () => {
+  it('should create a new todo for the authenticated user', async () => {
     const [agent, user] = await registerAndLogin();
     const todo = { task: 'try to take over the world', is_completed: false };
     const response = await agent.post('/api/v1/todos').send(todo);
@@ -58,6 +63,27 @@ describe('backend-express-template routes', () => {
       is_completed: todo.is_completed,
       user_id: user.id,
     });
+  });
+
+  it.only('should get todos associated with authenticated user', async () => {
+    const [agent, user] = await registerAndLogin();
+    const notUser = await UserService.create(mockUser2);
+
+    const todo = await Todo.insert({
+      task: 'try to take over the world',
+      is_completed: false,
+      user_id: user.id,
+    });
+    const todo2 = await Todo.insert({
+      task: 'try to take over the moon',
+      is_completed: false,
+      user_id: notUser.id,
+    });
+
+    const response = await agent.get('/api/v1/todos');
+    expect(response.status).toEqual(200);
+    expect(response.body).toEqual([todo]);
+    expect(response.body).not.toEqual([todo2]);
   });
 
   afterAll(() => {
