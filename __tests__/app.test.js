@@ -103,7 +103,7 @@ describe('backend-express-template routes', () => {
     expect(response.body).toEqual({ ...todo, is_completed: true });
   });
 
-  it.only('should delete an authd users todo', async () => {
+  it('should delete an authd users todo', async () => {
     const [agent, user] = await registerAndLogin();
 
     const todo = await Todo.insert({
